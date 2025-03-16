@@ -271,7 +271,7 @@ class MainHTTPHandler(BaseHTTPRequestHandler):
         try:
             data_string = self.rfile.read(int(self.headers['Content-Length']))
             request = json.loads(data_string)
-        except:
+        except BaseException:
             code = BAD_REQUEST
 
         if request:
