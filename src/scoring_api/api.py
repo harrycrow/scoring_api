@@ -9,7 +9,7 @@ import hashlib
 import uuid
 from argparse import ArgumentParser
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from scoring import get_score, get_interests
+from .scoring import get_score, get_interests
 
 
 SALT = "Otus"
