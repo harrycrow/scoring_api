@@ -20,7 +20,7 @@ def set_valid_auth(request):
 
 
 @pytest.fixture
-def get_bad_auth_request():
+def bad_auth_request():
     return [
         {"account": "horns&hoofs", "login": "h&f", "method": "online_score"},
         {"account": "horns&hoofs", "login": "h&f", "arguments": {}},
@@ -28,7 +28,7 @@ def get_bad_auth_request():
     ]
 
 @pytest.fixture
-def get_invalid_score_request():
+def invalid_score_request():
         return [
             {},
             {"phone": "79175002040"},
@@ -46,7 +46,7 @@ def get_invalid_score_request():
         ]
 
 @pytest.fixture
-def get_ok_score_request():
+def ok_score_request():
     return [
         {"phone": "79175002040", "email": "stupnikov@otus.ru"},
         {"phone": 79175002040, "email": "stupnikov@otus.ru"},
@@ -59,7 +59,7 @@ def get_ok_score_request():
     ]
 
 @pytest.fixture
-def get_invalid_interests_request():
+def invalid_interests_request():
     return [
         {"phone": "79175002040", "email": "stupnikov@otus.ru"},
         {"phone": 79175002040, "email": "stupnikov@otus.ru"},
@@ -72,7 +72,7 @@ def get_invalid_interests_request():
     ]
 
 @pytest.fixture
-def get_ok_interests_request():
+def ok_interests_request():
      return [
         {"client_ids": [1, 2, 3], "date": datetime.datetime.today().strftime("%d.%m.%Y")},
         {"client_ids": [1, 2], "date": "19.07.2017"},
