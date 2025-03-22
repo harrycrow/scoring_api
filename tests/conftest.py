@@ -22,6 +22,14 @@ def set_valid_auth(request):
 @pytest.fixture
 def bad_auth_request():
     return [
+        {"account": "horns&hoofs", "login": "h&f", "method": "online_score", "token": "", "arguments": {}},
+        {"account": "horns&hoofs", "login": "h&f", "method": "online_score", "token": "sdd", "arguments": {}},
+        {"account": "horns&hoofs", "login": "admin", "method": "online_score", "token": "", "arguments": {}},
+    ]
+
+@pytest.fixture
+def invalid_method_request():
+    return [
         {"account": "horns&hoofs", "login": "h&f", "method": "online_score"},
         {"account": "horns&hoofs", "login": "h&f", "arguments": {}},
         {"account": "horns&hoofs", "method": "online_score", "arguments": {}},
@@ -61,14 +69,12 @@ def ok_score_request():
 @pytest.fixture
 def invalid_interests_request():
     return [
-        {"phone": "79175002040", "email": "stupnikov@otus.ru"},
-        {"phone": 79175002040, "email": "stupnikov@otus.ru"},
-        {"gender": 1, "birthday": "01.01.2000", "first_name": "a", "last_name": "b"},
-        {"gender": 0, "birthday": "01.01.2000"},
-        {"gender": 2, "birthday": "01.01.2000"},
-        {"first_name": "a", "last_name": "b"},
-        {"phone": "79175002040", "email": "stupnikov@otus.ru", "gender": 1, "birthday": "01.01.2000",
-         "first_name": "a", "last_name": "b"},
+        {},
+        {"date": "20.07.2017"},
+        {"client_ids": [], "date": "20.07.2017"},
+        {"client_ids": {1: 2}, "date": "20.07.2017"},
+        {"client_ids": ["1", "2"], "date": "20.07.2017"},
+        {"client_ids": [1, 2], "date": "XXX"},
     ]
 
 @pytest.fixture
