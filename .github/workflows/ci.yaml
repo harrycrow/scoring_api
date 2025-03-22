@@ -30,7 +30,7 @@ jobs:
         run: uv run ruff check --output-format=github .
 
       - name: install package
-        run: uv run pip install -e .
+        run: uv pip install -e .
 
       - name: mypy  # Run mypy static analysis
         run: uv run mypy .
