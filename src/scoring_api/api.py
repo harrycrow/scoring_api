@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import abc
+import os
 import json
 import datetime
 import logging
@@ -10,6 +11,7 @@ import uuid
 from argparse import ArgumentParser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from .scoring import get_score, get_interests
+from .store import Store
 
 
 SALT = "Otus"
@@ -253,13 +255,16 @@ def method_handler(request, ctx, store):
     except ValueError as e:
         logging.error(f"Validation error: {e}")
         return {"error": str(e)}, INVALID_REQUEST
+    except BaseException as e:
+        logging.exception(f"Unexpected error: {e}")
+        return {"error": "Internal Server Error"}, INTERNAL_ERROR
 
 
 class MainHTTPHandler(BaseHTTPRequestHandler):
     router = {
         "method": method_handler
     }
-    store = None
+    store = Store(os.path.dirname(os.path.abspath(__file__)) + "/config.ini")
 
     def get_request_id(self, headers):
         return headers.get('HTTP_X_REQUEST_ID', uuid.uuid4().hex)
@@ -297,6 +302,13 @@ class MainHTTPHandler(BaseHTTPRequestHandler):
         logging.info(context)
         self.wfile.write(json.dumps(r).encode('utf-8'))
         return
+    
+    def server_close(self):
+        """Ensure Redis connection is closed when the server shuts down."""
+        print("Shutting down server...")
+        if hasattr(self, "store") and self.store:
+            self.store.close()
+        super().server_close()
 
 
 if __name__ == "__main__":

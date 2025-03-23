@@ -2,14 +2,21 @@ import pytest
 import datetime
 import hashlib
 import scoring_api.api as api
+import redis
+import os
+from scoring_api.store import Store
+from pytest_mock_resources import create_redis_fixture
 
+mock_redis = create_redis_fixture()
 
-def get_response(request):
+def get_response(mock_redis, request, store=None):
     headers = {}
     context = {}
-    settings = {}
-    response, code = api.method_handler({"body": request, "headers": headers}, context, settings)
-    return response, code, headers, context, settings
+    if store is None:
+        store = Store(os.path.dirname(os.path.abspath(__file__)) + "/config.ini")
+        store.redis_client = mock_redis
+    response, code = api.method_handler({"body": request, "headers": headers}, context, store)
+    return response, code, headers, context
 
 def set_valid_auth(request):
     if request.get("login") == api.ADMIN_LOGIN:
@@ -18,6 +25,12 @@ def set_valid_auth(request):
         msg = (request.get("account", "") + request.get("login", "") + api.SALT).encode('utf-8')
         request["token"] = hashlib.sha512(msg).hexdigest()
 
+@pytest.fixture
+def bad_store(mocker):
+    mock_redis = mocker.patch("scoring_api.store.redis.Redis")
+    mock_instance = mock_redis.return_value
+    mock_instance.get.side_effect = redis.exceptions.TimeoutError
+    return Store(os.path.dirname(os.path.abspath(__file__)) + "/config.ini")
 
 @pytest.fixture
 def bad_auth_request():
